@@ -8,10 +8,12 @@
 button {
  cursor: pointer;
 }
+
 body{
   min-height: 100vh;
   min-width: 100vw;
 }
+
 header{
   min-height: 4rem;
   background-color: beige;
@@ -19,16 +21,35 @@ header{
   justify-content: center;
   align-items: center;
 }
+
 .cards{
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  margin-top: 5rem;
+display: flex;
+flex-flow: row wrap;
+justify-content:center;
+max-width: 800px;
+margin: 0 auto;
 }
+
 .card{
   display: inline-block;
+  flex-basis: 25%;
   background-color: #d3d3d3;
-  margin: 0 2rem;
+  margin: 2rem 1rem;
   padding: 1rem ;
+  text-align: center;
+}
+
+@media(max-width: 815px) {
+ .card {
+   flex-basis: 25%;
+ }
+}@media(max-width: 555px) {
+ .card {
+   flex-basis: 100%;
+ }
+}
+
+.scoreBoard{
+  display: flex;
+  flex-direction: column;
 }

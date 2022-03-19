@@ -3,6 +3,8 @@ import "./App.css";
 
 function App() {
   const [state, setState] = useState(initalState);
+  const [score, setScore] = useState(0);
+  const [bestScore,setBestScore]=useState(0);
 
   useEffect(() => {
     const arr = shuffleCards(initalState.cards);
@@ -16,10 +18,19 @@ function App() {
   useEffect(() => {
     const isGameOver = gameOver(state);
     if (isGameOver) {
+      const arr = shuffleCards(initalState.cards);
       console.log("gameover");
-      setState(initalState);
+      setState({
+        ...initalState,
+        cards: arr,
+      });
+      setScore(0);
     }
   }, [state]);
+
+  useEffect(()=>{
+    console.log(score);
+  },[score])
 
   function handleChoice(card) {
     console.log(card, "is the choice");
@@ -27,13 +38,16 @@ function App() {
     if (isValid) {
       const arr = shuffleCards(state.cards);
       setState({
-        ...state,
         cards: arr,
         cardsChosen: [...state.cardsChosen, card],
-        score: state.score + 1,
       });
+      const newScore = score+1;
+      if(newScore>bestScore) setBestScore(newScore)
+      setScore(newScore)
+
     } else {
       setState(initalState);
+      setScore(0)
     }
   }
 
@@ -43,7 +57,7 @@ function App() {
   return (
     <div className="App">
       <header>
-        <Score score={state.score} />
+        <Scores score={score} bestScore={bestScore} />
       </header>
       <div className="cards">{cardsList}</div>
     </div>
@@ -58,14 +72,20 @@ function Card({ card, handleChoice }) {
   );
 }
 
-function Score({ score, bestScore }) {
-  return <div className="score">Score: {score}</div>;
+function Scores({ score, bestScore }) {
+  return (
+    <div className="scoreBoard">
+      <div className="score">Score {score}</div>
+      <div className="bestScore">Best Score {bestScore}</div>
+    </div>
+  );
 }
 const initalState = {
   cards: [1, 2, 3, 4, 5],
   cardsChosen: [],
-  score: 0,
 };
+
+
 function shuffleCards(cards) {
   const arr = [...cards];
   let m = arr.length;
@@ -85,7 +105,7 @@ function checkPreviousCard(selectedCard, cards) {
   return isValid;
 }
 function gameOver(state) {
-  if (state.score === state.cards.length) {
+  if (state.cards.length === state.cardsChosen.length) {
     return true;
   }
   return false;
