@@ -35,27 +35,37 @@ margin: 0 auto;
   display: inline-block;
   flex-basis: 25%;
   background-color: #d3d3d3;
-  margin: 2rem 1rem;
+  margin: 1rem 1rem;
   padding: 1rem ;
   text-align: center;
+  border-radius: 3px;
 }
 
 @media(max-width: 815px) {
  .card {
    flex-basis: 25%;
  }
-}@media(max-width: 555px) {
- .card {
-   flex-basis: 100%;
- }
 }
 
 img{
-  max-width: 100px;
+  max-width: 10rem;
+  border-radius: 3px;
+}
+
+.name{
+  margin-top:0.5rem;
+  font-weight: 600;
+  font-style: oblique;
 }
 
 /* End of Card Styling */
 .scoreBoard{
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+}
+.scoreBoard span{
+  font-weight: 600;
+}
+.bestScore{
+  margin-left: 0.5rem;
 }
