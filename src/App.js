@@ -1,59 +1,57 @@
 import { useEffect, useState } from "react";
+import Card from "./components/Card";
+import Scores from "./components/Scores";
+import { shuffleCards, checkPreviousCard, gameOver } from "./utils";
 import "./App.css";
 
 function App() {
-  const [state, setState] = useState(initalState);
+  const [cards, setCards] = useState([]);
+  const [chosenCards, setChosenCards] = useState([]);
   const [score, setScore] = useState(0);
-  const [bestScore,setBestScore]=useState(0);
+  const [bestScore, setBestScore] = useState(0);
 
   useEffect(() => {
-    const arr = shuffleCards(initalState.cards);
-    setState({
-      ...initalState,
-      cards: arr,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const loadCards = async () => {
+      setCards(shuffleCards(await getData()));
+    };
+    loadCards();
   }, []);
 
   useEffect(() => {
-    const isGameOver = gameOver(state);
+    const isGameOver = gameOver(cards, chosenCards);
     if (isGameOver) {
-      const arr = shuffleCards(initalState.cards);
-      console.log("gameover");
-      setState({
-        ...initalState,
-        cards: arr,
-      });
+      console.log("Game Over");
       setScore(0);
     }
-  }, [state]);
+  }, [cards, chosenCards]);
 
-  useEffect(()=>{
-    console.log(score);
-  },[score])
-
-  function handleChoice(card) {
-    console.log(card, "is the choice");
-    const isValid = checkPreviousCard(card, state.cardsChosen);
+  function handleChoice(cardId) {
+    const isValid = checkPreviousCard(cardId, chosenCards);
     if (isValid) {
-      const arr = shuffleCards(state.cards);
-      setState({
-        cards: arr,
-        cardsChosen: [...state.cardsChosen, card],
-      });
-      const newScore = score+1;
-      if(newScore>bestScore) setBestScore(newScore)
-      setScore(newScore)
-
+      const arr = shuffleCards(cards);
+      setCards(arr);
+      setChosenCards([...chosenCards, cardId]);
+      const newScore = score + 1;
+      if (newScore > bestScore) setBestScore(newScore);
+      setScore(newScore);
     } else {
-      setState(initalState);
-      setScore(0)
+      setChosenCards([]);
+      setScore(0);
     }
   }
 
-  const cardsList = state.cards.map((card) => (
-    <Card key={card} card={card} handleChoice={handleChoice} />
-  ));
+  const cardsList = cards.map((card) => {
+    return (
+      <Card
+        key={card.id}
+        id={card.id}
+        name={card.name}
+        image={card.image}
+        handleChoice={handleChoice}
+      />
+    );
+  });
+
   return (
     <div className="App">
       <header>
@@ -64,50 +62,23 @@ function App() {
   );
 }
 
-function Card({ card, handleChoice }) {
-  return (
-    <div className="card" onClick={() => handleChoice(card)}>
-      {card}
-    </div>
-  );
-}
-
-function Scores({ score, bestScore }) {
-  return (
-    <div className="scoreBoard">
-      <div className="score">Score {score}</div>
-      <div className="bestScore">Best Score {bestScore}</div>
-    </div>
-  );
-}
-const initalState = {
-  cards: [1, 2, 3, 4, 5],
-  cardsChosen: [],
-};
-
-
-function shuffleCards(cards) {
-  const arr = [...cards];
-  let m = arr.length;
-  let t;
-  let i;
-
-  while (m) {
-    i = Math.floor(Math.random() * m--);
-    t = arr[m];
-    arr[m] = arr[i];
-    arr[i] = t;
+async function getData() {
+  const length = 10;
+  const characters = [];
+  for (let i = 1; i < length; i++) {
+    const response = await fetch(
+      `https://rickandmortyapi.com/api/character/${i}`,
+      {
+        mode: "cors",
+      }
+    );
+    const character = await response.json();
+    const id = character.id;
+    const name = character.name;
+    const image = character.image;
+    characters.push({ id, name, image });
   }
-  return arr;
+  return characters;
 }
-function checkPreviousCard(selectedCard, cards) {
-  const isValid = cards.includes(selectedCard) ? false : true;
-  return isValid;
-}
-function gameOver(state) {
-  if (state.cards.length === state.cardsChosen.length) {
-    return true;
-  }
-  return false;
-}
+
 export default App;

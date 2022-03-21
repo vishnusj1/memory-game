@@ -30,6 +30,7 @@ max-width: 800px;
 margin: 0 auto;
 }
 
+/* Card Styling */
 .card{
   display: inline-block;
   flex-basis: 25%;
@@ -49,6 +50,11 @@ margin: 0 auto;
  }
 }
 
+img{
+  max-width: 100px;
+}
+
+/* End of Card Styling */
 .scoreBoard{
   display: flex;
   flex-direction: column;
